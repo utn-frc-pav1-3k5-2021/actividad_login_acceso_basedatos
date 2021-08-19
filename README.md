@@ -297,7 +297,7 @@ Y en el archivo **frmLogin.cs**, método **ValidarCredenciales()** refactorizamo
                                                    "  WHERE usuario =  '", pUsuario, "'");
 
                 //Usando el método GetDataManager obtenemos la instancia unica de DataManager (Patrón Singleton) y ejecutamos el método ConsultaSQL()
-                DataTable resultado =  DataManager.GetDataManager().ConsultaSQL(consultaSql);
+                DataTable resultado =  DataManager.GetInstance().ConsultaSQL(consultaSql);
 
                 //Validamos que el resultado tenga al menos una fila.
                 if (resultado.Rows.Count >= 1)

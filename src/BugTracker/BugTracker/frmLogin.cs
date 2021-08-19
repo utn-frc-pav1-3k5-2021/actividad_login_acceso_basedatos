@@ -40,6 +40,7 @@ namespace BugTracker
             if (ValidarCredenciales(txtUsuario.Text, txtPassword.Text))
             {
                 MessageBox.Show("Usted a ingresado al sistema.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
                 this.Close();
             }
             else
@@ -52,7 +53,7 @@ namespace BugTracker
 
         public bool ValidarCredenciales(string pUsuario, string pPassword)
         {
-            return false;
+            return true;
         }
 
         private void frmLogin_Load(object sender, EventArgs e)

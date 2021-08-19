@@ -53,42 +53,30 @@ namespace BugTracker
 
         public bool ValidarCredenciales(string pUsuario, string pPassword)
         {
-            string cadenaConexion = "Data Source=localhost;Initial Catalog=BugTracker84100;Integrated Security=true;"; ;
-
-            SqlConnection conn = new SqlConnection(cadenaConexion);
-
             try
             {
-                conn.Open();
+                string consulta = "SELECT * FROM Usuarios WHERE usuario = @pUsuario";
 
-                SqlCommand comando = conn.CreateCommand();
-                comando.CommandText = "SELECT * FROM Usuarios WHERE usuario = @pUsuario";
+                Dictionary<string, object> args = new Dictionary<string, object>();
+                args["pUsuario"] = pUsuario;
 
-                comando.Parameters.Add(new SqlParameter("pUsuario", pUsuario));
 
-                var reader = comando.ExecuteReader();
+                DataTable resultado = DataManager.GetInstance().ConsultaSQL(consulta, args);
 
-                if(reader.Read())
+                if(resultado.Rows.Count == 1)
                 {
-                    if (reader["password"].ToString() != pPassword)
-                        conn.Close();
+                    if (resultado.Rows[0]["password"].ToString() == pPassword)
+
                         return true;
                 }
 
-                conn.Close();
                 return false;
             }
             catch (SqlException ex)
             {
                 MessageBox.Show(string.Concat("Error de base de datos: ", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
-            {
-                if (conn.State == ConnectionState.Open)
-                {
-                    conn.Close();
-                }
-            }
+
 
             return false;
         }

@@ -56,20 +56,26 @@ namespace BugTracker
             //Inicializar usuarioValido en false
             bool usuarioValido = false;
 
+            /*
+            // - Antes de DataManger
             //nueva conexion a base de datos
             SqlConnection conexion = new SqlConnection();
             //nos conectamos a la base de datos
             conexion.ConnectionString = "Data Source =.\\SQLEXPRESS; Initial Catalog = BugTracker78755; Integrated Security = true; ";
+            */
 
             try
             {
                 //Abrimos conexion a BD
-                conexion.Open();
+                //conexion.Open();
 
                 //Consulta sql
                 string consultaSql = string.Concat("SELECT * ",
                                                    "FROM Usuarios ",
                                                    "WHERE usuario = '", pUsuario, "'");
+
+                /*
+                // - Antes de DataManager
                 //Comando de SQL
                 SqlCommand comando = new SqlCommand(consultaSql, conexion);
 
@@ -84,6 +90,20 @@ namespace BugTracker
                         usuarioValido = true;
                     }
                 }
+                */
+
+                // - Con DataManager
+                DataTable resultado = DataManager.GetInstance().ConsultaSQL(consultaSql);
+
+                //Control de si el resultado ttiene mas de 1 fila
+                if(resultado.Rows.Count >= 1)
+                {
+                    //Controlamos que la contraseña sea la del usuario
+                    if(resultado.Rows[0]["password"].ToString() == pPassword)
+                    {
+                        usuarioValido = true;
+                    }
+                }
 
             }
             catch (SqlException excepcion)
@@ -91,6 +111,7 @@ namespace BugTracker
                 //Mensaje error en base de datos
                 MessageBox.Show(string.Concat("Error en la base de datos: ", excepcion.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            /*
             finally
             {
                 //Validar si sigue la conexion abierta, y si sigue abierta la cierra
@@ -99,6 +120,7 @@ namespace BugTracker
                     conexion.Close();
                 }
             }
+            */
 
             //retornamos si el usuario es valido
             return usuarioValido;

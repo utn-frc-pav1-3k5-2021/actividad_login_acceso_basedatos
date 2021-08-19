@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -52,6 +53,43 @@ namespace BugTracker
 
         public bool ValidarCredenciales(string pUsuario, string pPassword)
         {
+            string cadenaConexion = "Data Source=localhost;Initial Catalog=BugTracker84100;Integrated Security=true;"; ;
+
+            SqlConnection conn = new SqlConnection(cadenaConexion);
+
+            try
+            {
+                conn.Open();
+
+                SqlCommand comando = conn.CreateCommand();
+                comando.CommandText = "SELECT * FROM Usuarios WHERE usuario = @pUsuario";
+
+                comando.Parameters.Add(new SqlParameter("pUsuario", pUsuario));
+
+                var reader = comando.ExecuteReader();
+
+                if(reader.Read())
+                {
+                    if (reader["password"].ToString() != pPassword)
+                        conn.Close();
+                        return true;
+                }
+
+                conn.Close();
+                return false;
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(string.Concat("Error de base de datos: ", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (conn.State == ConnectionState.Open)
+                {
+                    conn.Close();
+                }
+            }
+
             return false;
         }
 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
 
 namespace BugTracker
 {
@@ -52,7 +53,55 @@ namespace BugTracker
 
         public bool ValidarCredenciales(string pUsuario, string pPassword)
         {
-            return false;
+            //Inicializar usuarioValido en false
+            bool usuarioValido = false;
+
+            //nueva conexion a base de datos
+            SqlConnection conexion = new SqlConnection();
+            //nos conectamos a la base de datos
+            conexion.ConnectionString = "Data Source =.\\SQLEXPRESS; Initial Catalog = BugTracker78755; Integrated Security = true; ";
+
+            try
+            {
+                //Abrimos conexion a BD
+                conexion.Open();
+
+                //Consulta sql
+                string consultaSql = string.Concat("SELECT * ",
+                                                   "FROM Usuarios ",
+                                                   "WHERE usuario = '", pUsuario, "'");
+                //Comando de SQL
+                SqlCommand comando = new SqlCommand(consultaSql, conexion);
+
+                SqlDataReader reader = comando.ExecuteReader();
+
+                //Lee si existe el usuario
+                if(reader.Read())
+                {
+                    //Valida que sea la contraseña correcta
+                    if(reader["password"].ToString() == pPassword)
+                    {
+                        usuarioValido = true;
+                    }
+                }
+
+            }
+            catch (SqlException excepcion)
+            {
+                //Mensaje error en base de datos
+                MessageBox.Show(string.Concat("Error en la base de datos: ", excepcion.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                //Validar si sigue la conexion abierta, y si sigue abierta la cierra
+                if (conexion.State == ConnectionState.Open)
+                {
+                    conexion.Close();
+                }
+            }
+
+            //retornamos si el usuario es valido
+            return usuarioValido;
         }
 
         private void frmLogin_Load(object sender, EventArgs e)

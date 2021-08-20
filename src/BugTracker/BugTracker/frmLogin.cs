@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -53,7 +54,44 @@ namespace BugTracker
 
         public bool ValidarCredenciales(string pUsuario, string pPassword)
         {
-            return true;
+            bool usuarioValido = false;
+
+            SqlConnection conexion = new SqlConnection();
+
+            conexion.ConnectionString = "Data Source=.\\SQLEXPRESS;Initial Catalog=BugTracker;Integrated Security=true;";
+
+            try
+            {
+                conexion.Open();
+
+                String consultaSql = string.Concat("SELECT * ", "FROM Usuarios ", "WHERE usuario='", pUsuario, "'");
+
+                SqlCommand command = new SqlCommand(consultaSql, conexion);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    if(reader["password"].ToString() == pPassword)
+                    {
+                        usuarioValido = true;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(String.Concat("Error de base de datos :", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            finally
+            {
+                if(conexion.State == ConnectionState.Open)
+                {
+                    conexion.Close();
+                }
+            }
+
+            return usuarioValido ;
         }
 
         private void frmLogin_Load(object sender, EventArgs e)

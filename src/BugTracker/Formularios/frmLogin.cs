@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
 
 namespace BugTracker
 {
@@ -17,12 +18,7 @@ namespace BugTracker
             InitializeComponent();
         }
 
-        private void btnSalir_Click(object sender, EventArgs e)
-        {
-            Environment.Exit(0);
-        }
-
-        #region Evento de Botones
+        #region Eventos de Botones
         private void btnIngresar_Click(object sender, EventArgs e)
         {
             /*//Validacion de ingreso de un usuario
@@ -82,17 +78,14 @@ namespace BugTracker
                 
 
         }
-        #endregion
 
-        #region Validaciones
-        private bool ValidarCredenciales(Clases.Usuario usuario)
+        private void btnSalir_Click(object sender, EventArgs e)
         {
-            if (usuario.NombreUsuario == "Christian" && usuario.Contraseña == "123")
-                return true;
-            return false;
+            Environment.Exit(0);
         }
         #endregion
 
+        #region Eventos de presion de teclas
         private void txtUsuario_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == Convert.ToChar(Keys.Enter))
@@ -108,5 +101,73 @@ namespace BugTracker
             if (e.KeyChar == Convert.ToChar(Keys.Escape))
                 this.btnSalir_Click(sender, e);
         }
+        #endregion
+
+        #region Validaciones
+        private bool ValidarCredenciales(Clases.Usuario usuario)
+        {
+            /*if (usuario.NombreUsuario == "Christian" && usuario.Contraseña == "123")
+                return true;
+            return false;*/
+            //Inicializamos la variable usuarioValido en false, para que solo si el usuario es valido retorne true
+            bool usuarioValido = false;
+
+            //La doble barra o */ nos permite escribir comentarios sobre nuestro codigo sin afectar su funcionamiento.
+
+            //Creamos una conexion a base de datos nueva.
+            SqlConnection conexion = new SqlConnection();
+
+            //Definimos la cadena de conexion a la base de datos.
+            conexion.ConnectionString = "Data Source=.\\SQLEXPRESS;Initial Catalog=BugTracker;Integrated Security=true;";
+
+            //La sentencia try...catch nos permite "atrapar" excepciones (Errores) y dar al usuario un mensaje más amigable.
+            try
+            {
+                //Abrimos la conexion a la base de datos.
+                conexion.Open();
+
+                //Construimos la consulta sql para buscar el usuario en la base de datos.
+                String consultaSql = string.Concat(" SELECT * ",
+                                                   "   FROM Usuarios ",
+                                                   "  WHERE usuario =  '", usuario.NombreUsuario, "'");
+
+                //Creamos un objeto command para luego ejecutar la consulta sobre la base de datos
+                SqlCommand command = new SqlCommand(consultaSql, conexion);
+
+                // El metodo ExecuteReader retorna un objeto SqlDataReader con la respuesta de la base de datos. 
+                // Con SqlDataReader los datos se leen fila por fila, cambiando de fila cada vez que se ejecuta el metodo Read()
+                SqlDataReader reader = command.ExecuteReader();
+
+                // El metodo Read() lee la primera fila disponible, si NO existe una fila retorna false (la consulta no devolvio resultados).
+                if (reader.Read())
+                {
+                    //En caso de que exista el usuario, validamos que password corresponda al usuario
+                    if (reader["password"].ToString() == usuario.Contraseña)
+                    {
+                        usuarioValido = true;
+                    }
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                //Mostramos un mensaje de error indicando que hubo un error en la base de datos.
+                MessageBox.Show(string.Concat("Error de base de datos: ", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                //Preguntamos si el estado de la conexion es abierto antes de cerrar la conexion.
+                if (conexion.State == ConnectionState.Open)
+                {
+                    //Cerramos la conexion
+                    conexion.Close();
+                }
+            }
+
+            // Retornamos el valor de usuarioValido. 
+            return usuarioValido;
+    }
+        #endregion
+
     }
 }

@@ -5,11 +5,13 @@ using System.Data;
 using System.Data.SqlClient;
 public class DataManager
 {
-
     private string string_conexion;
     private static DataManager instance;
+
+    
     public DataManager()
     {
+        //Definimos la cadena de conexión a la BD
         string_conexion = "Data Source=.\\SQLEXPRESS;Initial Catalog=BugTracker;Integrated Security=true;";
     }
 
@@ -34,17 +36,22 @@ public class DataManager
     ///              b) durante la ejecución del comando.
     public DataTable ConsultaSQL(string strSql, Dictionary<string, object> prs = null)
     {
-
+        //creamos la conexión a la BD
         SqlConnection dbConnection = new SqlConnection();
+        //Creamos un objeto command para luego ejecutar la consulta sobre la base de datos
         SqlCommand cmd = new SqlCommand();
+        //Creamos una tabla de datos
         DataTable tabla = new DataTable();
         try
         {
-
             dbConnection.ConnectionString = string_conexion;
             dbConnection.Open();
+
+            //Indicamos al objeto command con que BD conectar
             cmd.Connection = dbConnection;
+            //
             cmd.CommandType = CommandType.Text;
+            //
             cmd.CommandText = strSql;
 
             //Agregamos a la colección de parámetros del comando los filtros recibidos
@@ -79,6 +86,7 @@ public class DataManager
     ///          El error de conexión se produce:
     ///              a) durante la apertura de la conexión
     ///              b) durante la ejecución del comando.
+    
     public int EjecutarSQL(string strSql, Dictionary<string, object> prs = null)
     {
         // Se utiliza para sentencias SQL del tipo “Insert/Update/Delete”

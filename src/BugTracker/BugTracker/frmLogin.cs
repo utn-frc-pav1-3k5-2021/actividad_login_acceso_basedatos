@@ -53,7 +53,16 @@ namespace BugTracker
 
         public bool ValidarCredenciales(string pUsuario, string pPassword)
         {
-            return true;
+            //Inicializamos la variable usuarioValido en false, para que solo si el usuario es valido retorne true
+            bool usuarioValido = false;
+
+            //La doble barra o */ nos permite escribir comentarios sobre nuestro codigo sin afectar su funcionamiento.
+
+            //Creamos una conexion a base de datos nueva.
+            SqlConnection conexion = new SqlConnection();
+
+            //Definimos la cadena de conexion a la base de datos.
+            conexion.ConnectionString = "Data Source=.\\SQLEXPRESS;Initial Catalog=BugTracker;Integrated Security=true;";
         }
 
         private void frmLogin_Load(object sender, EventArgs e)

@@ -53,7 +53,42 @@ namespace BugTracker
 
         public bool ValidarCredenciales(string pUsuario, string pPassword)
         {
-            return true;
+            //Inicializamos la variable usuarioValido en false, para que solo si el usuario es valido retorne true
+            bool usuarioValido = false;
+
+            //La doble barra o */ nos permite escribir comentarios sobre nuestro codigo sin afectar su funcionamiento.
+
+            //La sentencia try...catch nos permite "atrapar" excepciones (Errores) y dar al usuario un mensaje más amigable.
+            try
+            {
+
+                //Construimos la consulta sql para buscar el usuario en la base de datos.
+                String consultaSql = string.Concat(" SELECT * ",
+                                                   "   FROM Usuarios ",
+                                                   "  WHERE usuario =  '", pUsuario, "'");
+
+                //Usando el método GetDBHelper obtenemos la instancia unica de DBHelper (Patrón Singleton) y ejecutamos el método ConsultaSQL()
+                DataTable resultado = DataManager.GetInstance().ConsultaSQL(consultaSql);
+
+                // Validamos que el resultado tenga al menos una fila.
+                if (resultado.Rows.Count >= 1)
+                {
+                    //En caso de que exista el usuario, validamos que password corresponda al usuario
+                    if (resultado.Rows[0]["password"].ToString() == pPassword)
+                    {
+                        usuarioValido = true;
+                    }
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                //Mostramos un mensaje de error indicando que hubo un error en la base de datos.
+                MessageBox.Show(string.Concat("Error de base de datos: ", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            // Retornamos el valor de usuarioValido. 
+            return usuarioValido;
         }
 
         private void frmLogin_Load(object sender, EventArgs e)

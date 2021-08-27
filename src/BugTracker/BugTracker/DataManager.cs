@@ -8,7 +8,7 @@ public class DataManager
 
     private string string_conexion;
     private static DataManager instance;
-    public DataManager()
+    private DataManager()
     {
         string_conexion = "Data Source=.\\SQLEXPRESS;Initial Catalog=PAVI-TP-2021;Integrated Security=true;";
     }

@@ -348,7 +348,7 @@ INSERT [dbo].[Usuarios] ([id_usuario], [id_perfil], [usuario], [password], [emai
 GO
 INSERT [dbo].[Usuarios] ([id_usuario], [id_perfil], [usuario], [password], [email], [borrado]) VALUES (12, 1, N'ecarlozzib', N'UT6gDHjv2e', N'adenizetb@rediff.com', 0)
 GO
-INSERT [dbo].[Usuarios] ([id_usuario], [id_perfil], [usuario], [password], [email], [borrado]) VALUES (13, 1, N'pcutrissc', N'QzVukPHkB', N'lrouxc@reverbnation.com', 0)
+INSERT [dbo].[Usuarios] ([id_usuario], [id_perfil], [usuario], [password], [email], [borrado]) VALUES (13, 1, N'admin', N'123', N'lrouxc@reverbnation.com', 0)
 GO
 INSERT [dbo].[Usuarios] ([id_usuario], [id_perfil], [usuario], [password], [email], [borrado]) VALUES (14, 3, N'aseeleyd', N'VdVsiKrLy4', N'gcopplestoned@nationalgeographic.com', 0)
 GO
